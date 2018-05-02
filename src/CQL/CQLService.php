@@ -6,9 +6,18 @@ class CQLService extends ConfluenceClient
 {
     public $uri = '/api/content/search';
 
-    public function search($paramArray = null)
+    public function search($query, $expands = [], $start = NULL, $limit = NULL)
     {
-        $queryParam = '?' . 'cql=' . http_build_query($paramArray);
+        $queryParam = '?' . 'cql=' . urlencode($query);
+
+        if (is_array($expands) && count($expands) > 0)
+            $queryParam .= "&expand=" . implode(",", $expands);
+
+        if ($start !== NULL)
+            $queryParam .= "&start=" . intval($start);
+
+        if ($limit !== NULL)
+            $queryParam .= "&limit=" . intval($limit);
 
         $ret = $this->exec($this->uri . $queryParam, null);
 
